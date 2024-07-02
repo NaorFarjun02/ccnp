@@ -1,0 +1,117 @@
+
+profile
+R2
+crypto isakmp policy 10 - תעדןף
+ encr aes 128 - פרוטוקול הצפנה
+ authentication pre-share - סוג אוטנטיקציה
+ group 5 - diffie-hellman 
+crypto isakmp key cisco address 10.1.5.1 - המפתח הצפנה עצמו ומול איזה ציוד זה עובד (הכתובת של הרשת הציבורית)
+!
+!
+crypto ipsec transform-set naor esp-aes - להגדיר את הסוג עבודה של הIPSEC
+ mode transport -> tunnel/transport
+
+crypto ipsec profile protect - נייצר פרופיל שיגיד באיזה סוג של IPSEC אנחנו משתמשים
+ set transform-set naor
+
+
+interface Tunnel 1
+ ip address 10.10.10.2 255.255.255.252
+ tunnel source Ethernet0/0
+ tunnel destination 10.1.5.1
+ip ospf 1 area 0
+ tunnel protection ipsec profile protect
+
+
+R1  
+crypto isakmp policy 10
+ encr aes 256
+ authentication pre-share
+ group 5
+crypto isakmp key cisco address 10.2.5.1
+!
+!
+crypto ipsec transform-set naor esp-aes
+ mode transport
+
+crypto ipsec profile protect
+ set transform-set naor
+
+
+interface Tunnel 1
+ ip address 10.10.10.1 255.255.255.252
+ tunnel source Ethernet0/0
+ tunnel destination 10.2.5.1
+ip ospf 1 area 0
+ tunnel protection ipsec profile protect
+
+================================================================================================================
+with crypto map 
+
+R2
+crypto isakmp policy 10 
+ encr aes 256
+ authentication pre-share
+ group 5
+crypto isakmp key cisco address 10.1.5.1
+!
+!
+crypto ipsec transform-set ohad esp-aes
+ mode transport
+!
+!
+!
+
+crypto map vpn 1 ipsec-isakmp
+ set peer 10.1.5.1
+ set transform-set ohad
+ match address ohad
+
+interface Tunnel1
+ ip address 10.10.10.2 255.255.255.0
+ tunnel source Ethernet0/0
+ tunnel destination 10.1.5.1
+
+interface Ethernet0/0
+ crypto map vpn
+
+
+
+R1
+crypto isakmp policy 10 
+ encr aes 256
+ authentication pre-share
+ group 5
+crypto isakmp key cisco address 10.2.5.1
+!
+!
+crypto ipsec transform-set ohad esp-aes
+ mode transport
+!
+!
+!
+crypto map vpn 1 ipsec-isakmp
+ set peer 10.2.5.1
+ set transform-set ohad
+ match address ohad
+
+interface Tunnel1
+ ip address 10.10.10.1 255.255.255.0
+ tunnel source Ethernet0/0
+ tunnel destination 10.2.5.1
+
+interface Ethernet0/0
+ ip address 10.1.5.1 255.255.255.252
+ crypto map vpn
+
+
+
+
+
+
+
+
+
+
+
+

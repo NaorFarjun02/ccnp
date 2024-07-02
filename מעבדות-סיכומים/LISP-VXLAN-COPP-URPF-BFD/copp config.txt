@@ -1,0 +1,63 @@
+copp
+used to limit traffic on cpu 
+
+1. acls are built in order to match identified traffic 
+
+ip access-list extended TELNET
+permit tcp any any eq 23 
+
+ip access-list extended EIGRP 
+permit eigrp any any 
+
+ip access-list extended SSH
+permit tcp any any eq 22 
+
+ip access-list extended icmp 
+permit icmp any any 
+
+
+2.configure class maps each acls is configured as a class 
+class-map match-all CM-TELNET
+match access-group name TELNET
+
+class-map match-all CM-EIGRP
+match access-group name EIGRP
+
+class-map match-all CM-SSH
+match access-group name SSH
+
+class-map match-all CM-ICMP
+match access-group name ICMP
+
+
+
+3.create a policy map that defines policy 
+
+policy-map PM-COPP
+Class CM-TELNET
+police 8000 conform-action drop exceed-action drop 
+
+Class CM-EIGRP
+police rate 10 pps conform-action transmit exceed-action drop 
+
+Class CM-SSH
+police 50000 conform-action transmit exceed-action transmit 
+
+Class CM-ICMP
+police rate 10 pps conform-action transmit exceed-action drop 
+
+
+4. create the class default 
+Class class default 
+police 12000 conform-action transmit exceed-action transmit
+
+
+5.apply the policy to the control plane 
+control-plane 
+service-policy input PM-COPP
+
+
+
+show policy-map control-plane all 
+
+

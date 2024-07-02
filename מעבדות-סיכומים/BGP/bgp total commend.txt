@@ -1,0 +1,84 @@
+router(config)#router bgp (AS number)
+router(config-router)#neighbor (ip address) remote-as (AS number)
+router(config-router)#network x.x.x.x mask x.x.x.x
+Router(config-router)#neighbor x.x.x.x ebgp-multihop x
+Router(config-router)#neighbor x.x.x.x update-source loopback 0
+Router(config-router)#neighbor x.x.x.x next-hop-self
+
+router#show ip bgp
+router#clear ip bgp * all in/out
+
+Router(config-router)#neighbor x.x.x.x route-reflector-client
+
+bgp attribute- 
+1)weigth:
+router(config)#router bgp (as number)
+router(confog-router)#neighbor x.x.x.x weight (number)
+
+router(config)#ip prefix-list (name1) permit x.x.x.x/x
+router(config)#route-map (name2) permit 10
+router(config-route-map)#match ip address prefix-list (name1)
+router(config-route-map)# set weight (0-65535)
+router(config-route-map)#exit
+router(config)#route-map (name2) permit 20
+router(config)#router bgp (as number)
+router(confog-router)#neighbor x.x.x.x route-map (name2) (in/out)
+
+2)local preferance:
+router(config)#ip prefix-list (name1) permit x.x.x.x/x
+router(config)#route-map (name2) permit 10
+router(config-route-map)#match ip address prefix-list (name1)
+router(config-route-map)# set local-preferance (0-255)
+router(config-route-map)#exit
+router(config)#route-map (name2) permit 20
+router(config-route-map)#exit
+router(config)#router bgp (as number)
+router(confog-router)#neighbor x.x.x.x route-map (name2) (in/out)
+
+5)shortest AS path:
+router(config)#ip prefix-list (name1) permit x.x.x.x/x
+router(config)#route-map (name2) permit 10
+router(config-route-map)#match ip address prefix-list (name1)
+router(config-route-map)# set as-path prepent x x x x 
+router(config-route-map)#exit
+router(config)#route-map (name2) permit 20
+router(config-route-map)#exit
+router(config)#router bgp (as number)
+router(confog-router)#neighbor x.x.x.x route-map (name2) (in/out)
+
+6)originate code:
+router(config)#ip prefix-list (name1) permit x.x.x.x/x
+router(config)#route-map (name2) permit 10
+router(config-route-map)#match ip address prefix-list (name1)
+router(config-route-map)# set origin (incomlete/IGP)
+router(config-route-map)#exit
+router(config)#route-map (name2) permit 20
+router(config-route-map)#exit
+router(config)#router bgp (as number)
+router(confog-router)#neighbor x.x.x.x route-map (name2) (in/out)
+
+summary:
+router(config)#router bgp (as number)
+router(config-router)#aggregate-address x.x.x.x x.x.x.x (ip + sm)
+router(config-router)#aggregate-address x.x.x.x x.x.x.x summary-only
+router(config-router)#aggregate-address x.x.x.x x.x.x.x summary-only as-set
+
+route filtering-
+1)distribute-list:
+router(config)#ip access-list standard (name)
+router(config-atn-acl)#deny x.x.x.x x.x.x.x (ip + wc)
+router(config-atn-acl)#permit any
+router(config-atn-acl)#exit
+router(config)#router bgp (as number)
+router(config-router)#neighbor x.x.x.x distribute-list (name) in/out
+
+2)prefix-list:
+router(config)#ip prefix-list (name) deny x.x.x.x/x
+router(config)#ip prefix-list (name) permit 0.0.0.0/0 le 32
+router(config)#router bgp (as number)
+router(config-router)#neighbor x.x.x.x prefix-list (name) in/out
+
+3)regex:
+router(config)#ip as-path access-list (number) permit (regex line)
+router(config)#router bgp (as number)
+router(config-router)#neighbor (ip address) filter-list (acl number) in/out

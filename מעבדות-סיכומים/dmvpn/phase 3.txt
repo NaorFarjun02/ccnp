@@ -1,0 +1,46 @@
+
+
+
+
+
+
+
+
+
+
+upgrade to phase 3 
+HUB 
+ip nhrp redirect 
+
+spoke 
+no tunnel destination 20.1.5.1
+tunnel mode gre multipoint
+ip nhrp shortcut 
+ip nhrp map multicast 20.1.5.1
+
+
+
+
+how to encrypt a multipoint tunnel 
+crypto ikev2 keyring ohad 
+peer any 
+address 0.0.0.0 0.0.0.0
+pre-shared-key cisco456
+
+
+crypto ikev2 profile ohad 
+match identity remote address 0.0.0.0
+
+authentication local pre-share 
+authentication remote pre-share 
+keyring local ohad 
+
+crypto ipsec transform-set ohad esp-aes 
+mode transport 
+
+crypto ipsec profile ccnp 
+set transform-set ohad 
+set ikev2-profile ohad 
+
+int tun1
+tunnel protection ipsec profile ccnp shared 

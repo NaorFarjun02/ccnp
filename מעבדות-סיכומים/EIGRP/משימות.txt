@@ -1,0 +1,28 @@
+lab requierments
+1. ip addressing 10.x.y.1-2
+2.Loopback per router 5 in r10 10 (loopbacks will be for example R1 10.10.1.1 10.10.1.2 10.10.1.3...)
+3.eigrp 100 neighborships (R1 to R5 named mode)
+4. a metric manipulation delay will efect two times the BW
+5.R3 will reach R2 loopbacks via R8 
+6.R10 will summarize his loopbacks and will leak 10.10.10.1
+7.auth between all R1 neighbors
+8.R7 stub 
+9.R5 loopbacks are passive interfaces 
+10. R10 will not accept R2 - 5 loopback 0's
+11. R9 will change R4 loopbacks 1-4 metric
+ 
+
+
+4)
+conf t
+router eigrp 100
+metric weights 0 1 0 2 0 0
+
+7)
+
+key chain gaya
+key 10 
+key-string momo
+
+ip authentication mode eigrp 100 md5
+ip authentication key-chain eigrp 100 gaya

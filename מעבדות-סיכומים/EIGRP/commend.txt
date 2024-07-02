@@ -1,0 +1,104 @@
+classic mode:
+router(config)#router eigrp 1
+router(config-router)#network (network) (wc)
+or
+router(config-router)#network 0.0.0.0 0.0.0.0
+
+#show ip eigrp interface
+#show ip eigrp topology (show the best route, the seccessor route)
+#show ip eigrp topology all-links
+
+router(config-if)#delay 1 
+router(config-router)#eigrp router-id 1.1.1.1
+
+name mode:
+router(config)#router eigrp name/mumber 
+router(config-router)#address-family ipv4 unicast autonomous system 1
+router(config-router-af)#network 0.0.0.0 0.0.0.0
+router(config-router-af)#eigrp router-id 2.2.2.2
+
+passive interface: 
+classic mode:
+router(config)#router eigrp 1
+router(config-router)#passive-interface e0/1
+
+name mode:
+router(config)#router eigrp name/number 
+router(config-router)#address-family ipv4 unicast autonomous system 1
+router(config-router-af)#af-interface e0/1
+router(config-router-af-interface)#passive-interface
+
+authentication:
+classic mode:
+router(config)#key chain (name) 
+router(config-keychain)#key (number)
+router(config-keychain-key)#key-string (password)
+router(config)#interface e0/1
+router(config-if)#ip authentication mode eigrp 1 md5
+router(config-if)#ip authentication key-chain eigrp 1 (name)
+
+name mode:
+router(config)#key chain (name)
+router(config-keychain)#key (number)
+router(config-keychain-key)#key-string (password)
+router(config-keychain-key)# router eigrp (name)
+router(config-router)#address-family ipv4 unicast autonomous system 1
+router(config-router-af)#af-interface default
+router(config-router-af-interface)#authentication mode md5
+router(config-router-af-interface)#authentication key-chain (name) 
+
+meteic:
+classic mode:
+router(config)#router eigrp 1
+router(config-router)#metric weights 1 1 0 0 0 1
+
+name mode:
+router(config)#router eigrp name/mumber 
+router(config-router)#address-family ipv4 unicast autonomous system 1
+router(config-router-af)#metric weights 1 1 0 0 0 1
+
+variance:
+classic mode:
+router(config)#router eigrp 1
+router(config-router)# variance 3
+
+name mode:
+router(config)#router eigrp name/mumber 
+router(config-router)#address-family ipv4 unicast autonomous system 1
+router(config-router-af)#topology base
+router(config-router-af-topology)#variance 3
+
+leak-map:
+classic mode:
+router(config)#ip prefix-list (name1) permit x.x.x.x/x
+router(config)#route-map (name2) permit 10
+router(config-router-map)#match ip address prefix-list (name1) 
+exit
+router(config)#interface ex/x
+router(config-if)#ip summary-address eigrp 1 (network address) (subnet mask) leak-map (name2)
+
+Route filtering:
+router(config)#ip prefix-list (name) deny (ip address/prefix)
+router(config)#ip prefix-list (name) permit 0.0.0.0/0 le 32
+router(config)#router eigrp 1
+router(config-router)#distribute-list prefix (name) out/in
+
+offset list:
+router(config)#ip access-list standard (number)
+router(config-std-nacl)#permit (ip address) (WC)
+exit
+router(config)#router eigrp 1
+router(config-router)#offset-list (number ACL) out 10000
+
+EIGRPv6:
+classic mode:
+router(config)#IPv6 router eigrp 1
+router(config-router)#eigrp router-id X.X.X.X
+router(config)#interface e0/0
+router(config-if)#ipv6 eigrp (AS number)
+
+Mame mode:
+router(config)#router eigrp (name)
+router(config-router)#address-family ipv6 autonomous system 1
+router(config-router-af)#af-interface e0/1
+router(config-router-af-interface)#shutdown

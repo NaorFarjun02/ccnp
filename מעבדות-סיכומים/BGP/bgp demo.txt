@@ -1,0 +1,91 @@
+
+R10
+Router(config)#ip prefix-list naor permit 10.10.9.1/32
+Router(config)#route-map mosh permit 10
+Router(config-route-map)#match ip address prefix-list naor
+Router(config-route-map)#set weight 100
+Router(config-route-map)#route-map mosh permit 20
+Router(config-route-map)#exit
+Router(config)#router bgp 400
+Router(config-router)#neighbor 10.10.6.0 route-map mosh in
+
+R7
+ ip prefix-list naor permit 10.10.10.1/32
+route-map mosh permit 10
+match ip address prefix-list naor
+set local-preference 200
+route-map mosh permit 20
+
+router bgp 300
+neighbor 10.10.6.0 route-map mosh in
+
+
+
+
+
+!R10
+ip prefix-list farjun permit 10.10.10.1/32
+ip prefix-list farjun permit 10.10.10.2/32
+ip prefix-list farjun permit 10.10.10.3/32
+ip prefix-list farjun permit 10.10.10.3/32
+route-map moo permit 10
+match ip address prefix-list farjun
+set as-path prepend 400 400 400
+route-map moo permit 20
+router bgp 400
+neighbor 10.10.6.0 route-map moo out
+
+R9
+ip prefix-list farjun permit 10.10.10.2/32
+route-map moo permit 10
+match ip address prefix-list farjun
+set origin incomplete
+route-map moo permit 20
+router bgp 100
+neighbor 10.10.5.0 route-map moo in
+
+
+
+
+ip route 10.10.9.0 255.255.255.255 212.100.29.2
+
+router bgp 200
+neighbor 10.10.9.0 remote-as 100
+neighbor 10.10.9.0 ebgp-multihop 5
+neighbor 10.10.9.0 update-source lo0
+
+
+
+neighbor 10.10.3.0 remote-as 200
+neighbor 10.10.3.0 ebgp-multihop 5
+neighbor 10.10.3.0 update-source lo0
+
+neighbor 10.10.5.0 remote-as 200
+neighbor 10.10.5.0 ebgp-multihop 5
+neighbor 10.10.5.0 update-source lo0
+
+neighbor 10.10.1.0 remote-as 200
+neighbor 10.10.1.0 ebgp-multihop 5
+neighbor 10.10.1.0 update-source lo0
+
+
+
+
+
+
+
+router bgp 300
+ neighbor 10.10.7.0 remote-as 300
+ neighbor 10.10.7.0 update-source Loopback0
+ neighbor 10.10.7.0 route-reflector-client
+
+ neighbor 10.10.6.0 remote-as 300
+ neighbor 10.10.6.0 update-source Loopback0
+ neighbor 10.10.6.0 route-reflector-client
+
+
+
+
+
+
+

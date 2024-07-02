@@ -1,0 +1,49 @@
+HUB 
+int tun 1
+tun source e0/0
+tunnel mode gre multipoint 
+ip add 172.16.100.1 255.255.255.0
+ip nhrp network-id 1
+ip nhrp map multicast dyanmic 
+router eigrp 100
+network 172.16.0.0 0.0.255.255 
+
+ 
+
+
+
+R2
+int tunnel 1
+tunnel source e0/0
+tunnel destination 20.1.5.1
+ip address 172.16.100.2 255.255.255.0
+ip nhrp network-id 1 
+ip nhrp nhs 172.16.100.1 nbma 20.1.5.1 
+router eigrp 100
+network 172.16.0.0 0.0.255.255
+
+
+R3
+int tunnel 1
+tunnel source e0/0
+tunnel destination 20.1.5.1
+ip address 172.16.100.3 255.255.255.0
+ip nhrp network-id 1 
+ip nhrp nhs 172.16.100.1 nbma 20.1.5.1 
+router eigrp 100
+network 172.16.0.0 0.0.255.255
+
+
+R4
+int tunnel 1
+tunnel source e0/0
+tunnel destination 20.1.5.1
+ip address 172.16.100.4
+ip nhrp network-id 1 
+ip nhrp nhs 172.16.100.1 nbma 20.1.5.1 
+router eigrp 100
+network 172.16.0.0 0.0.255.255
+
+
+ 
+
